@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Henus321/boney-james-go-backend/internal/config"
+	"github.com/Henus321/boney-james-go-backend/internal/domain/coat"
 	"github.com/Henus321/boney-james-go-backend/pkg/client/mongodb"
 	"github.com/Henus321/boney-james-go-backend/pkg/logging"
 	"github.com/julienschmidt/httprouter"
@@ -23,10 +24,16 @@ func main() {
 	cfg := config.GetConfig()
 
 	logger.Info("db init")
-	_, err := mongodb.NewClient(context.TODO(), cfg.Storage)
+	mongoDBClient, err := mongodb.NewClient(context.TODO(), cfg.Storage)
 	if err != nil {
 		logger.Fatalf("%v", err)
 	}
+
+	coatStorage := coat.NewStorage(mongoDBClient, "coat", logger)
+	coatService := coat.NewService(coatStorage)
+	coatHandler := coat.NewHandler(coatService, logger)
+	logger.Info("coat handler register")
+	coatHandler.Register(router)
 
 	start(router, cfg)
 }

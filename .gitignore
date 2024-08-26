@@ -26,3 +26,4 @@ go.work.sum
 
 # custom
 .DS_Store
+logs
