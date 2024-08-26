@@ -10,6 +10,7 @@ type Service interface {
 	GetAllCoats(ctx context.Context) ([]*Coat, error)
 	GetCoatByID(ctx context.Context, id string) (*Coat, error)
 	CreateCoat(ctx context.Context, dto *CreateCoatDTO) error
+	DeleteCoat(ctx context.Context, id string) error
 }
 
 func NewService(storage Storage) Service {
@@ -26,4 +27,8 @@ func (s *service) GetCoatByID(ctx context.Context, id string) (*Coat, error) {
 
 func (s *service) CreateCoat(ctx context.Context, dto *CreateCoatDTO) error {
 	return s.storage.Create(ctx, dto)
+}
+
+func (s *service) DeleteCoat(ctx context.Context, id string) error {
+	return s.storage.Delete(ctx, id)
 }
