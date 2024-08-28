@@ -32,6 +32,7 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.GET(coatListURL, h.GetAllCoats)
 	router.POST(coatListURL, h.CreateCoat)
 	router.GET(coatURL, h.GetCoatByID)
+	router.DELETE(coatURL, h.DeleteCoat)
 }
 
 func (h *handler) GetAllCoats(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
@@ -89,5 +90,20 @@ func (h *handler) CreateCoat(w http.ResponseWriter, r *http.Request, _ httproute
 
 	// TODO error handle
 	utils.WriteJSON(w, http.StatusCreated, nil)
+	h.logger.Infof("%s: success", op)
+}
+
+func (h *handler) DeleteCoat(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	const op = "coat.handler.DeleteCoat"
+
+	err := h.coatService.DeleteCoat(context.Background(), params.ByName("id"))
+	if err != nil {
+		h.logger.Error(op, err)
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("%s: %w", op, err))
+		return
+	}
+
+	// TODO error handle
+	utils.WriteJSON(w, http.StatusOK, nil)
 	h.logger.Infof("%s: success", op)
 }

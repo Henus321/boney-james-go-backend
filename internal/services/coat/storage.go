@@ -19,6 +19,7 @@ type Storage interface {
 	GetAll(ctx context.Context) ([]*Coat, error)
 	GetOneByID(ctx context.Context, id string) (*Coat, error)
 	Create(ctx context.Context, coat *CreateCoatDTO) error
+	Delete(ctx context.Context, id string) error
 }
 
 func NewStorage(database *mongo.Database, collection string, logger *logging.Logger) Storage {
@@ -84,6 +85,25 @@ func (d *db) Create(ctx context.Context, dto *CreateCoatDTO) error {
 	if err != nil {
 		d.logger.Error(op, err)
 		return fmt.Errorf("%s: failed to connect to mongoDB: %w", op, err)
+	}
+
+	d.logger.Infof("%s: success", op)
+	return nil
+}
+
+func (d *db) Delete(ctx context.Context, id string) error {
+	const op = "coat.storage.Delete"
+
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		d.logger.Error(op, err)
+		return fmt.Errorf("%s: failed to convert hex to objectid: %w", op, err)
+	}
+	filter := bson.M{"_id": oid}
+	_, err = d.collection.DeleteOne(ctx, filter)
+	if err != nil {
+		d.logger.Error(op, err)
+		return fmt.Errorf("%s: failed to find coat by id: %w", op, err)
 	}
 
 	d.logger.Infof("%s: success", op)
