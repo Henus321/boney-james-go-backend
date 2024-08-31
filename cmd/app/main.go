@@ -7,6 +7,7 @@ import (
 	"github.com/Henus321/boney-james-go-backend/internal/service/coat"
 	"github.com/Henus321/boney-james-go-backend/pkg/client/postgresql"
 	"github.com/Henus321/boney-james-go-backend/pkg/logging"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/julienschmidt/httprouter"
 	"net"
 	"net/http"
@@ -17,28 +18,18 @@ func main() {
 	logging.Init()
 	logger := logging.GetLogger()
 
-	logger.Info("router init")
 	router := httprouter.New()
 
-	logger.Info("config init")
 	cfg := config.GetConfig()
 
-	logger.Info("db init")
-	postgreSQLClient, err := postgresql.NewClient(context.TODO(), 3, cfg.Storage)
-	if err != nil {
-		logger.Fatalf("%v", err)
-	}
+	db := initDatabase(cfg, logger)
 
-	coatStorage := coat.NewStorage(postgreSQLClient, logger)
-	coatService := coat.NewService(coatStorage)
-	coatHandler := coat.NewHandler(coatService, logger)
-	logger.Info("coat handler register")
-	coatHandler.Register(router)
+	initCoatService(db, router, logger)
 
-	start(router, cfg)
+	initServer(router, cfg)
 }
 
-func start(router *httprouter.Router, cfg *config.Config) {
+func initServer(router *httprouter.Router, cfg *config.Config) {
 	logger := logging.GetLogger()
 	logger.Info("start application")
 
@@ -56,4 +47,22 @@ func start(router *httprouter.Router, cfg *config.Config) {
 
 	logger.Infof("server running on http://%v:%v", cfg.Listen.Host, cfg.Listen.Port)
 	logger.Fatal(server.Serve(listener))
+}
+
+func initDatabase(cfg *config.Config, logger *logging.Logger) *pgxpool.Pool {
+	logger.Info("db init")
+	postgreSQLClient, err := postgresql.NewClient(context.TODO(), 3, cfg.Storage)
+	if err != nil {
+		logger.Fatalf("%v", err)
+	}
+
+	return postgreSQLClient
+}
+
+func initCoatService(db *pgxpool.Pool, router *httprouter.Router, logger *logging.Logger) {
+	coatStorage := coat.NewStorage(db, logger)
+	coatService := coat.NewService(coatStorage)
+	coatHandler := coat.NewHandler(coatService, logger)
+	logger.Info("coat handler register")
+	coatHandler.Register(router)
 }
