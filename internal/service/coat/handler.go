@@ -3,7 +3,6 @@ package coat
 import (
 	"context"
 	"fmt"
-	"github.com/Henus321/boney-james-go-backend/internal/handlers"
 	"github.com/Henus321/boney-james-go-backend/pkg/logging"
 	"github.com/Henus321/boney-james-go-backend/pkg/utils"
 	"github.com/go-playground/validator/v10"
@@ -16,12 +15,16 @@ const (
 	coatURL     = "/coat/:id"
 )
 
+type Handler interface {
+	Register(router *httprouter.Router)
+}
+
 type handler struct {
 	coatService Service
 	logger      *logging.Logger
 }
 
-func NewHandler(coatService Service, logger *logging.Logger) handlers.Handler {
+func NewHandler(coatService Service, logger *logging.Logger) Handler {
 	return &handler{
 		coatService: coatService,
 		logger:      logger,
@@ -54,6 +57,7 @@ func (h *handler) GetCoatByID(w http.ResponseWriter, _ *http.Request, params htt
 	const op = "coat.handler.GetCoatByID"
 
 	coat, err := h.coatService.GetCoatByID(context.Background(), params.ByName("id"))
+
 	if err != nil {
 		h.logger.Error(op, err)
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("%s: %w", op, err))
@@ -68,20 +72,20 @@ func (h *handler) GetCoatByID(w http.ResponseWriter, _ *http.Request, params htt
 func (h *handler) CreateCoat(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	const op = "coat.handler.CreateCoat"
 
-	var dto CreateCoatDTO
-	if err := utils.ParseJSON(r, &dto); err != nil {
+	var input CreateCoatInput
+	if err := utils.ParseJSON(r, &input); err != nil {
 		h.logger.Error(op, err)
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	if err := utils.Validate.Struct(dto); err != nil {
+	if err := utils.Validate.Struct(input); err != nil {
 		errors := err.(validator.ValidationErrors)
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %s: %v", op, errors))
 		return
 	}
 
-	err := h.coatService.CreateCoat(context.Background(), dto)
+	err := h.coatService.CreateCoat(context.Background(), input)
 	if err != nil {
 		h.logger.Error(op, err)
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("%s: %w", op, err))

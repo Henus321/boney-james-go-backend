@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Henus321/boney-james-go-backend/internal/config"
-	"github.com/Henus321/boney-james-go-backend/internal/services/coat"
+	"github.com/Henus321/boney-james-go-backend/internal/service/coat"
 	"github.com/Henus321/boney-james-go-backend/pkg/client/postgresql"
 	"github.com/Henus321/boney-james-go-backend/pkg/logging"
 	"github.com/julienschmidt/httprouter"

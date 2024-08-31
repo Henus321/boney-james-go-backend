@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-playground/validator/v10"
+	"github.com/jackc/pgtype"
 	"net/http"
 	"time"
 )
@@ -41,4 +42,12 @@ func DoWithTries(fn func() error, attempts int, delay time.Duration) (err error)
 	}
 
 	return
+}
+
+func FromTextArray(ta pgtype.TextArray) []string {
+	out := make([]string, len(ta.Elements))
+	for i, elem := range ta.Elements {
+		out[i] = elem.String
+	}
+	return out
 }

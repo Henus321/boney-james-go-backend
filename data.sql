@@ -17,6 +17,10 @@ CREATE TABLE public.coat_option (
         coatId UUID REFERENCES coat(id)
 );
 
+SELECT * FROM coat
+                  LEFT JOIN coat_option
+                            ON coat.id = coat_option.coatid;
+
 INSERT INTO coat (
     model,
     name,

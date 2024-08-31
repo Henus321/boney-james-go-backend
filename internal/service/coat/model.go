@@ -1,5 +1,7 @@
 package coat
 
+import "github.com/gofrs/uuid"
+
 type Coat struct {
 	ID          string `json:"id"`
 	Model       string `json:"model"`
@@ -8,25 +10,29 @@ type Coat struct {
 }
 
 type CoatOption struct {
-	ID         string   `json:"id"`
-	ColorLabel string   `json:"colorLabel"`
-	ColorHex   string   `json:"colorHex"`
-	Cost       int32    `json:"cost"`
-	Sizes      []string `json:"sizes"`
-	PhotoUrls  []string `json:"photoUrls"`
-	CoatId     string   `json:"coatId"`
+	ID         uuid.UUID `json:"id"`
+	ColorLabel string    `json:"colorLabel"`
+	ColorHex   string    `json:"colorHex"`
+	Cost       int32     `json:"cost"`
+	Sizes      []string  `json:"sizes"`
+	PhotoUrls  []string  `json:"photoUrls"`
+	CoatId     uuid.UUID `json:"coatId"`
 }
 
 type CoatWithOption struct {
-	ID          string       `json:"id"`
+	ID          uuid.UUID    `json:"id"`
 	Model       string       `json:"model"`
 	Name        string       `json:"name"`
 	Description string       `json:"description"`
 	CoatOptions []CoatOption `json:"coatOptions"`
 }
 
-type CreateCoatDTO struct {
+type CreateCoatInput struct {
 	Model       string `json:"model"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+}
+
+type GetCoatInput struct {
+	ID string `json:"id"`
 }
