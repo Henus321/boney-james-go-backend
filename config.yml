@@ -6,8 +6,8 @@ listen:
   port: 8080
 storage:
   host: localhost
-  port: 27017
-  database: some-mongo
-  username:
-  password:
+  port: 5432
+  database: postgres
+  username: postgres
+  password: postgres
 

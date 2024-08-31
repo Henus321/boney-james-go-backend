@@ -1,28 +1,32 @@
 package coat
 
 type Coat struct {
-	ID          string   `json:"id" bson:"_id,omitempty"`
-	Cost        int32    `json:"cost" bson:"cost"`
-	Description string   `json:"description" bson:"description"`
-	Model       string   `json:"model" bson:"model"`
-	Name        string   `json:"name" bson:"name"`
-	Type        string   `json:"type" bson:"type"`
-	Colors      []Color  `json:"colors" bson:"colors"`
-	Sizes       []string `json:"sizes" bson:"sizes"`
+	ID          string `json:"id"`
+	Model       string `json:"model"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
-type Color struct {
-	Label     string   `json:"label" bson:"label"`
-	Hex       string   `json:"hex" bson:"hex"`
-	PhotoUrls []string `json:"photoUrls" bson:"photoUrls"`
+type CoatOption struct {
+	ID         string   `json:"id"`
+	ColorLabel string   `json:"colorLabel"`
+	ColorHex   string   `json:"colorHex"`
+	Cost       int32    `json:"cost"`
+	Sizes      []string `json:"sizes"`
+	PhotoUrls  []string `json:"photoUrls"`
+	CoatId     string   `json:"coatId"`
+}
+
+type CoatWithOption struct {
+	ID          string       `json:"id"`
+	Model       string       `json:"model"`
+	Name        string       `json:"name"`
+	Description string       `json:"description"`
+	CoatOptions []CoatOption `json:"coatOptions"`
 }
 
 type CreateCoatDTO struct {
-	Cost        int32    `json:"cost" bson:"cost"`
-	Description string   `json:"description" bson:"description"`
-	Model       string   `json:"model" bson:"model"`
-	Name        string   `json:"name" bson:"name"`
-	Type        string   `json:"type" bson:"type"`
-	Colors      []Color  `json:"colors" bson:"colors"`
-	Sizes       []string `json:"sizes" bson:"sizes"`
+	Model       string `json:"model"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"net/http"
+	"time"
 )
 
 var Validate = validator.New()
@@ -25,4 +26,19 @@ func ParseJSON(r *http.Request, v any) error {
 	}
 
 	return json.NewDecoder(r.Body).Decode(v)
+}
+
+func DoWithTries(fn func() error, attempts int, delay time.Duration) (err error) {
+	for attempts > 0 {
+		if err = fn(); err != nil {
+			time.Sleep(delay)
+			attempts--
+
+			continue
+		}
+
+		return nil
+	}
+
+	return
 }

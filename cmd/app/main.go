@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/Henus321/boney-james-go-backend/internal/config"
 	"github.com/Henus321/boney-james-go-backend/internal/services/coat"
-	"github.com/Henus321/boney-james-go-backend/pkg/client/mongodb"
+	"github.com/Henus321/boney-james-go-backend/pkg/client/postgresql"
 	"github.com/Henus321/boney-james-go-backend/pkg/logging"
 	"github.com/julienschmidt/httprouter"
 	"net"
@@ -24,12 +24,12 @@ func main() {
 	cfg := config.GetConfig()
 
 	logger.Info("db init")
-	mongoDBClient, err := mongodb.NewClient(context.TODO(), cfg.Storage)
+	postgreSQLClient, err := postgresql.NewClient(context.TODO(), 3, cfg.Storage)
 	if err != nil {
 		logger.Fatalf("%v", err)
 	}
 
-	coatStorage := coat.NewStorage(mongoDBClient, "coat", logger)
+	coatStorage := coat.NewStorage(postgreSQLClient, logger)
 	coatService := coat.NewService(coatStorage)
 	coatHandler := coat.NewHandler(coatService, logger)
 	logger.Info("coat handler register")

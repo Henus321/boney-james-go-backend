@@ -81,7 +81,7 @@ func (h *handler) CreateCoat(w http.ResponseWriter, r *http.Request, _ httproute
 		return
 	}
 
-	err := h.coatService.CreateCoat(context.Background(), &dto)
+	err := h.coatService.CreateCoat(context.Background(), dto)
 	if err != nil {
 		h.logger.Error(op, err)
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("%s: %w", op, err))
