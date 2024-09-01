@@ -51,3 +51,22 @@ INSERT INTO coat_option (
             '0f656773-585b-403d-abde-12117ec860d0'
 );
 
+INSERT INTO coat_option (
+    colorLabel,
+    colorHex,
+    cost,
+    sizes,
+    photoUrls,
+    coatId
+) VALUES (
+             'Темно-синий',
+             '#080e61',
+             11999,
+             ARRAY ['XS 42', 'S 44', 'M 46', 'L 48'],
+             ARRAY [
+                 'https://firebasestorage.googleapis.com/v0/b/boney-james-c978c.appspot.com/o/2016%2F2021-a-005-1.jpg?alt=media&token=4f301a1d-77d8-4e15-9117-a40ae1107a42',
+                 'https://firebasestorage.googleapis.com/v0/b/boney-james-c978c.appspot.com/o/2016%2F2021-a-005-2.jpg?alt=media&token=3c6cce45-978c-4b8f-a25f-7529c36d948d',
+                 'https://firebasestorage.googleapis.com/v0/b/boney-james-c978c.appspot.com/o/2016%2F2021-a-005-3.jpg?alt=media&token=698d4f96-c5b4-4bcf-91e5-71cbb3147290'
+                 ],
+             '0f656773-585b-403d-abde-12117ec860d0'
+ );

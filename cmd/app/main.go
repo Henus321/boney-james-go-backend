@@ -22,6 +22,7 @@ func main() {
 
 	cfg := config.GetConfig()
 
+	// ??? ошибки на этом уровне обрабатывать или внутри?
 	db := initDatabase(cfg, logger)
 
 	initCoatService(db, router, logger)
