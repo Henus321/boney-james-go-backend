@@ -125,7 +125,7 @@ func (s *Storage) GetAllCoats(ctx context.Context) (*[]CoatWithOption, error) {
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("%s: failed to get coats: %w", op, err)
+		return nil, fmt.Errorf("%s: failed to get all coats: %w", op, err)
 	}
 
 	return &cwos, nil
@@ -207,7 +207,7 @@ func (s *Storage) GetCoatByID(ctx context.Context, id string) (*CoatWithOption, 
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("%s: failed to get coats: %w", op, err)
+		return nil, fmt.Errorf("%s: failed to get coat by id: %w", op, err)
 	}
 
 	return &cwo, nil
@@ -230,7 +230,7 @@ func (s *Storage) CreateCoat(ctx context.Context, input CreateCoatInput) error {
 
 	err := s.client.QueryRow(ctx, query, input.Model, input.Name, input.Description).Scan(&newId)
 	if err != nil {
-		return fmt.Errorf("%s: failed to get coats: %w", op, err)
+		return fmt.Errorf("%s: failed to create coat: %w", op, err)
 	}
 
 	// ??? returning как правильно вернуть newId? RETURNING id
@@ -252,15 +252,43 @@ func (s *Storage) DeleteCoat(ctx context.Context, id string) error {
 
 	err := s.client.QueryRow(ctx, query, id).Scan(&oldId)
 	if err != nil {
-		return fmt.Errorf("%s: failed to get coats: %w", op, err)
+		return fmt.Errorf("%s: failed to delete coat: %w", op, err)
 	}
 
 	// ??? returning как правильно вернуть oldId? RETURNING id
 	return nil
 }
 
-func (s *Storage) AddCoatOption(ctx context.Context, input AddCoatOptionInput) error {
+func (s *Storage) CreateCoatOption(ctx context.Context, input CreateCoatOptionInput) error {
+	const op = "coat.storage.CreateCoatOption"
 
+	query := `
+		INSERT INTO coat_option
+		  (colorLabel, colorHex, cost, sizes, photoUrls, coatId)
+		VALUES 
+		 ($1, $2, $3, $4, $5, $6)
+		RETURNING id
+	`
+
+	var (
+		newId pgtype.UUID
+	)
+
+	err := s.client.QueryRow(
+		ctx,
+		query,
+		input.ColorLabel,
+		input.ColorHex,
+		input.Cost,
+		input.Sizes,
+		input.PhotoUrls,
+		input.CoatID,
+	).Scan(&newId)
+	if err != nil {
+		return fmt.Errorf("%s: failed to create coat options: %w", op, err)
+	}
+
+	// ??? returning как правильно вернуть newId? RETURNING id
 	return nil
 }
 

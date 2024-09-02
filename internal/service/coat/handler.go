@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	coatListURL = "/coat"
-	coatURL     = "/coat/:id"
+	coatListURL   = "/coat"
+	coatURL       = "/coat/:id"
+	coatOptionURL = "/coat-option"
 )
 
 type Handler interface {
@@ -36,6 +37,7 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.POST(coatListURL, h.CreateCoat)
 	router.GET(coatURL, h.GetCoatByID)
 	router.DELETE(coatURL, h.DeleteCoat)
+	router.POST(coatOptionURL, h.CreateCoatOption)
 }
 
 func (h *handler) GetAllCoats(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
@@ -101,6 +103,34 @@ func (h *handler) DeleteCoat(w http.ResponseWriter, r *http.Request, params http
 	const op = "coat.handler.DeleteCoat"
 
 	err := h.coatService.DeleteCoat(context.Background(), params.ByName("id"))
+	if err != nil {
+		h.logger.Error(op, err)
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("%s: %w", op, err))
+		return
+	}
+
+	// TODO error handle
+	utils.WriteJSON(w, http.StatusOK, nil)
+	h.logger.Infof("%s: success", op)
+}
+
+func (h *handler) CreateCoatOption(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	const op = "coat.handler.CreateCoatOption"
+
+	var input CreateCoatOptionInput
+	if err := utils.ParseJSON(r, &input); err != nil {
+		h.logger.Error(op, err)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("%s: %w", op, err))
+		return
+	}
+
+	if err := utils.Validate.Struct(input); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %s: %v", op, errors))
+		return
+	}
+
+	err := h.coatService.CreateCoatOption(context.Background(), input)
 	if err != nil {
 		h.logger.Error(op, err)
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("%s: %w", op, err))

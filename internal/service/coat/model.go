@@ -33,7 +33,7 @@ type CreateCoatInput struct {
 	Description string `json:"description"`
 }
 
-type AddCoatOptionInput struct {
+type CreateCoatOptionInput struct {
 	CoatID     string   `json:"coatId"`
 	ColorLabel string   `json:"colorLabel"`
 	ColorHex   string   `json:"colorHex"`
