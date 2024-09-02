@@ -9,12 +9,14 @@ CREATE TABLE public.coat (
 
 CREATE TABLE public.coat_option (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        coatId UUID,
         colorLabel VARCHAR(100) NOT NULL,
         colorHex VARCHAR(25) NOT NULL,
         cost INTEGER NOT NULL,
         sizes VARCHAR(25)[],
         photoUrls VARCHAR(255)[],
-        coatId UUID REFERENCES coat(id)
+
+        FOREIGN KEY (coatId) REFERENCES public.coat (id) ON DELETE CASCADE
 );
 
 SELECT * FROM coat
@@ -70,3 +72,5 @@ INSERT INTO coat_option (
                  ],
              '0f656773-585b-403d-abde-12117ec860d0'
  );
+
+SELECT * FROM coat LEFT JOIN public.coat_option ON coat.id = coat_option.coatId;

@@ -2,13 +2,11 @@ package coat
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/Henus321/boney-james-go-backend/pkg/client/postgresql"
 	"github.com/Henus321/boney-james-go-backend/pkg/logging"
 	"github.com/Henus321/boney-james-go-backend/pkg/utils"
 	"github.com/gofrs/uuid"
-	"github.com/jackc/pgconn"
 	"github.com/jackc/pgtype"
 )
 
@@ -217,31 +215,49 @@ func (s *Storage) GetOneByID(ctx context.Context, id string) (*CoatWithOption, e
 
 // Create по ссылке, можно не возращать т.к это мутирует начальный
 func (s *Storage) Create(ctx context.Context, input CreateCoatInput) error {
-	q := `
-	INSERT INTO coat 
-  	  (name)
-	VALUES 
-   	 ($1)
-	RETURNING id
+	const op = "coat.storage.Create"
+
+	query := `
+		INSERT INTO coat 
+		  (model, name, description)
+		VALUES 
+		 ($1, $2, $3)
+		RETURNING id
 	`
 
-	if err := s.client.QueryRow(ctx, q).Scan(input.Name, input.Description, input.Model); err != nil {
-		var pgErr *pgconn.PgError
-		if errors.As(err, &pgErr) {
-			pgErr = err.(*pgconn.PgError)
-			newErr := fmt.Errorf("SQL Error: %s, Detail: %s, Where: %s, Code: %s, SQLState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState())
-			s.logger.Error(newErr)
-			return newErr
-		}
-		return err
+	var (
+		newId pgtype.UUID
+	)
+
+	err := s.client.QueryRow(ctx, query, input.Model, input.Name, input.Description).Scan(&newId)
+	if err != nil {
+		return fmt.Errorf("%s: failed to get coats: %w", op, err)
 	}
 
+	// ??? returning как правильно вернуть newId? RETURNING id
 	return nil
 }
 
 func (s *Storage) Delete(ctx context.Context, id string) error {
-	//TODO implement me
-	panic("implement me")
+	const op = "coat.storage.Delete"
+
+	query := `
+		DELETE FROM coat 
+		WHERE id = $1
+		RETURNING id
+	`
+
+	var (
+		oldId pgtype.UUID
+	)
+
+	err := s.client.QueryRow(ctx, query, id).Scan(&oldId)
+	if err != nil {
+		return fmt.Errorf("%s: failed to get coats: %w", op, err)
+	}
+
+	// ??? returning как правильно вернуть oldId? RETURNING id
+	return nil
 }
 
 // IndexOfCoat ??? Куда такие хелперы с конкретным значением
