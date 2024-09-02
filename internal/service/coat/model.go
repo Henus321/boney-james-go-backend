@@ -16,7 +16,7 @@ type CoatOption struct {
 	Cost       int32     `json:"cost"`
 	Sizes      []string  `json:"sizes"`
 	PhotoUrls  []string  `json:"photoUrls"`
-	CoatId     uuid.UUID `json:"coatId"`
+	CoatID     uuid.UUID `json:"coatId"`
 }
 
 type CoatWithOption struct {
@@ -33,6 +33,11 @@ type CreateCoatInput struct {
 	Description string `json:"description"`
 }
 
-type GetCoatInput struct {
-	ID string `json:"id"`
+type AddCoatOptionInput struct {
+	CoatID     string   `json:"coatId"`
+	ColorLabel string   `json:"colorLabel"`
+	ColorHex   string   `json:"colorHex"`
+	Cost       int32    `json:"cost"`
+	Sizes      []string `json:"sizes"`
+	PhotoUrls  []string `json:"photoUrls"`
 }

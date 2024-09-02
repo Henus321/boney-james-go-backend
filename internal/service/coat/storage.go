@@ -22,8 +22,8 @@ func NewStorage(client postgresql.Client, logger *logging.Logger) *Storage {
 	}
 }
 
-func (s *Storage) GetAll(ctx context.Context) (*[]CoatWithOption, error) {
-	const op = "coat.storage.GetAll"
+func (s *Storage) GetAllCoats(ctx context.Context) (*[]CoatWithOption, error) {
+	const op = "coat.storage.GetAllCoats"
 
 	query := `SELECT 
         	coat.id,
@@ -107,7 +107,7 @@ func (s *Storage) GetAll(ctx context.Context) (*[]CoatWithOption, error) {
 						Cost:       cost.Int,
 						Sizes:      utils.FromTextArray(sizes),
 						PhotoUrls:  utils.FromTextArray(photoUrls),
-						CoatId:     coatId.Bytes,
+						CoatID:     coatId.Bytes,
 					}},
 				})
 			} else {
@@ -118,7 +118,7 @@ func (s *Storage) GetAll(ctx context.Context) (*[]CoatWithOption, error) {
 					Cost:       cost.Int,
 					Sizes:      utils.FromTextArray(sizes),
 					PhotoUrls:  utils.FromTextArray(photoUrls),
-					CoatId:     coatId.Bytes,
+					CoatID:     coatId.Bytes,
 				})
 			}
 		}
@@ -131,8 +131,8 @@ func (s *Storage) GetAll(ctx context.Context) (*[]CoatWithOption, error) {
 	return &cwos, nil
 }
 
-func (s *Storage) GetOneByID(ctx context.Context, id string) (*CoatWithOption, error) {
-	const op = "coat.storage.GetOneByID"
+func (s *Storage) GetCoatByID(ctx context.Context, id string) (*CoatWithOption, error) {
+	const op = "coat.storage.GetCoatByID"
 
 	query := `SELECT 
     		coat.id,
@@ -201,7 +201,7 @@ func (s *Storage) GetOneByID(ctx context.Context, id string) (*CoatWithOption, e
 				Cost:       cost.Int,
 				Sizes:      utils.FromTextArray(sizes),
 				PhotoUrls:  utils.FromTextArray(photoUrls),
-				CoatId:     coatId.Bytes,
+				CoatID:     coatId.Bytes,
 			})
 		}
 	}
@@ -213,9 +213,8 @@ func (s *Storage) GetOneByID(ctx context.Context, id string) (*CoatWithOption, e
 	return &cwo, nil
 }
 
-// Create по ссылке, можно не возращать т.к это мутирует начальный
-func (s *Storage) Create(ctx context.Context, input CreateCoatInput) error {
-	const op = "coat.storage.Create"
+func (s *Storage) CreateCoat(ctx context.Context, input CreateCoatInput) error {
+	const op = "coat.storage.CreateCoat"
 
 	query := `
 		INSERT INTO coat 
@@ -238,8 +237,8 @@ func (s *Storage) Create(ctx context.Context, input CreateCoatInput) error {
 	return nil
 }
 
-func (s *Storage) Delete(ctx context.Context, id string) error {
-	const op = "coat.storage.Delete"
+func (s *Storage) DeleteCoat(ctx context.Context, id string) error {
+	const op = "coat.storage.DeleteCoat"
 
 	query := `
 		DELETE FROM coat 
@@ -257,6 +256,11 @@ func (s *Storage) Delete(ctx context.Context, id string) error {
 	}
 
 	// ??? returning как правильно вернуть oldId? RETURNING id
+	return nil
+}
+
+func (s *Storage) AddCoatOption(ctx context.Context, input AddCoatOptionInput) error {
+
 	return nil
 }
 

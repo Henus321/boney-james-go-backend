@@ -18,17 +18,17 @@ func NewService(storage *Storage) Service {
 }
 
 func (s *service) GetAllCoats(ctx context.Context) (*[]CoatWithOption, error) {
-	return s.storage.GetAll(ctx)
+	return s.storage.GetAllCoats(ctx)
 }
 
 func (s *service) GetCoatByID(ctx context.Context, id string) (*CoatWithOption, error) {
-	return s.storage.GetOneByID(ctx, id)
+	return s.storage.GetCoatByID(ctx, id)
 }
 
 func (s *service) CreateCoat(ctx context.Context, dto CreateCoatInput) error {
-	return s.storage.Create(ctx, dto)
+	return s.storage.CreateCoat(ctx, dto)
 }
 
 func (s *service) DeleteCoat(ctx context.Context, id string) error {
-	return s.storage.Delete(ctx, id)
+	return s.storage.DeleteCoat(ctx, id)
 }
