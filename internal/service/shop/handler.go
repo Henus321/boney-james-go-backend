@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	//shopListURL   = "/shop"
-	shopURL = "/shop/:id"
+	shopListURL = "/shop"
+	shopURL     = "/shop/:id"
 	//shopOptionURL = "/shop-option"
 )
 
@@ -33,24 +33,24 @@ func NewHandler(shopService Service, logger *logging.Logger) Handler {
 }
 
 func (h *handler) Register(router *httprouter.Router) {
-	//router.GET(coatListURL, h.GetAllCoats)
+	router.GET(shopListURL, h.GetAllShops)
 	router.GET(shopURL, h.GetShopByID)
 }
 
-//func (h *handler) GetAllCoats(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-//	const op = "coat.handler.GetAllCoats"
-//
-//	coats, err := h.coatService.GetAllCoats(context.Background())
-//	if err != nil {
-//		h.logger.Error(op, err)
-//		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("%s: %w", op, err))
-//		return
-//	}
-//
-//	// TODO error handle
-//	utils.WriteJSON(w, http.StatusOK, coats)
-//	h.logger.Infof("%s: success", op)
-//}
+func (h *handler) GetAllShops(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	const op = "coat.handler.GetAllShops"
+
+	coats, err := h.shopService.GetAllShops(context.Background())
+	if err != nil {
+		h.logger.Error(op, err)
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("%s: %w", op, err))
+		return
+	}
+
+	// TODO error handle
+	utils.WriteJSON(w, http.StatusOK, coats)
+	h.logger.Infof("%s: success", op)
+}
 
 func (h *handler) GetShopByID(w http.ResponseWriter, _ *http.Request, params httprouter.Params) {
 	const op = "coat.handler.GetShopByID"

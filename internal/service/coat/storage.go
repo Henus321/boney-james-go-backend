@@ -292,7 +292,7 @@ func (s *Storage) CreateCoatOption(ctx context.Context, input CreateCoatOptionIn
 	return nil
 }
 
-// IndexOfCoat ??? Куда такие хелперы с конкретным значением
+// IndexOfCoat ??? Куда такие хелперы с конкретным значением. GO generic ok?
 func IndexOfCoat(coats []CoatWithOption, coatId uuid.UUID) int {
 	for i, v := range coats {
 		if v.ID == coatId {
