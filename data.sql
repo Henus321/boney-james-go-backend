@@ -1,3 +1,4 @@
+----- COAT -----
 DROP TABLE IF EXISTS coat CASCADE;
 
 CREATE TABLE public.coat (
@@ -74,3 +75,87 @@ INSERT INTO coat_option (
  );
 
 SELECT * FROM coat LEFT JOIN public.coat_option ON coat.id = coat_option.coatId;
+
+----- SHOP -----
+DROP TABLE IF EXISTS shop CASCADE;
+
+CREATE TABLE public.shop (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        cityId UUID NOT NULL,
+        name  VARCHAR(255) NOT NULL,
+        phone  VARCHAR(25) NOT NULL,
+        street  VARCHAR(255) NOT NULL,
+        subway  VARCHAR(255) NOT NULL,
+        openPeriod  VARCHAR(100) NOT NULL,
+
+        FOREIGN KEY (cityId) REFERENCES public.shop_city (id)
+);
+
+CREATE TABLE public.shop_city (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        cityName  VARCHAR(255) NOT NULL,
+        cityLabel  VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE public.shop_type (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        typeName  VARCHAR(255) NOT NULL,
+        typeLabel  VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE public.shop_with_type (
+        shopId UUID,
+        shopTypeId UUID,
+
+        PRIMARY KEY (shopId, shopTypeId),
+        FOREIGN KEY (shopId) REFERENCES public.shop (id),
+        FOREIGN KEY (shopTypeId) REFERENCES public.shop_type (id)
+);
+
+INSERT INTO shop (
+        cityId,
+        name,
+        phone,
+        street,
+        subway,
+        openPeriod
+) VALUES (
+        'fdb2de16-75b1-4ba4-9702-d90ca05bd110',
+        'ТЦ Европейский',
+        '+7 (495) 921-34-44',
+        'ул.Площадь Киевского Вокзала',
+        'Метро Киевская',
+        '10:00-22:00'
+);
+
+INSERT INTO shop_city (
+        cityName,
+        cityLabel
+) VALUES (
+        'moscow',
+        'Москва'
+);
+
+INSERT INTO shop_type (
+        typeName,
+        typeLabel
+) VALUES (
+        'female',
+        'Одежда для женщин'
+);
+
+INSERT INTO shop_with_type (
+        shopId,
+        shopTypeId
+) VALUES (
+        '02cf3cf3-67f2-4268-a6cb-f117c6517085',
+        'd3afe521-92e1-4c97-b556-201169520b12'
+);
+
+SELECT * FROM shop_with_type as swp
+    INNER JOIN
+        (SELECT sh.id, sh.cityId, sh.name,sh.phone, sh.street,sh.subway, sh.openPeriod ,shct.cityName, shct.cityLabel, shct.id as shopCityId
+            FROM shop as sh LEFT JOIN shop_city as shct ON cityId = shct.id) as sp
+                ON sp.id = shopId
+    INNER JOIN (SELECT id as typeId, typeName, typeLabel FROM shop_type) as st ON swp.shopTypeId = st.typeId;
+
