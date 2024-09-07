@@ -51,3 +51,11 @@ func FromTextArray(ta pgtype.TextArray) []string {
 	}
 	return out
 }
+
+func CheckQueryParams(str string) *string {
+	if str == "" {
+		return nil
+	}
+
+	return &str
+}

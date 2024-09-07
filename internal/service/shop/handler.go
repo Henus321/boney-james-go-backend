@@ -13,7 +13,6 @@ import (
 const (
 	shopListURL = "/shop"
 	shopURL     = "/shop/:id"
-	//shopOptionURL = "/shop-option"
 )
 
 type Handler interface {
@@ -37,10 +36,13 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.GET(shopURL, h.GetShopByID)
 }
 
-func (h *handler) GetAllShops(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+func (h *handler) GetAllShops(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	const op = "coat.handler.GetAllShops"
 
-	coats, err := h.shopService.GetAllShops(context.Background())
+	cityId := r.URL.Query().Get("cityId")
+	typeId := r.URL.Query().Get("typeId")
+
+	coats, err := h.shopService.GetAllShops(context.Background(), utils.CheckQueryParams(cityId), utils.CheckQueryParams(typeId))
 	if err != nil {
 		h.logger.Error(op, err)
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("%s: %w", op, err))

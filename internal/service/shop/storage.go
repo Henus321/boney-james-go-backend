@@ -21,7 +21,7 @@ func NewStorage(client postgresql.Client, logger *logging.Logger) *Storage {
 	}
 }
 
-func (s *Storage) GetAllShops(ctx context.Context) (*[]ShopWithType, error) {
+func (s *Storage) GetAllShops(ctx context.Context, cityId *string, typeId *string) (*[]ShopWithType, error) {
 	const op = "coat.storage.GetAllShops"
 
 	query := `SELECT
@@ -42,9 +42,11 @@ func (s *Storage) GetAllShops(ctx context.Context) (*[]ShopWithType, error) {
         (SELECT sh.id, sh.cityId, sh.name,sh.phone, sh.street,sh.subway, sh.openPeriod ,shct.cityName, shct.cityLabel, shct.id as shopCityId
             FROM shop as sh LEFT JOIN shop_city as shct ON cityId = shct.id) as sp
                 ON sp.id = shopId
-    INNER JOIN (SELECT id as typeId, typeName, typeLabel FROM shop_type) as st ON swp.shopTypeId = st.typeId`
+    INNER JOIN (SELECT id as typeId, typeName, typeLabel FROM shop_type) as st ON swp.shopTypeId = st.typeId
+	WHERE cityId = $1 AND typeId = $2`
+	// TODO fix filter if - cityId, if not - show all
 
-	rows, err := s.client.Query(ctx, query)
+	rows, err := s.client.Query(ctx, query, cityId, typeId)
 	if err != nil {
 		return nil, fmt.Errorf("%s: failed to get shops: %w", op, err)
 	}
@@ -137,6 +139,7 @@ func (s *Storage) GetAllShops(ctx context.Context) (*[]ShopWithType, error) {
 }
 
 func (s *Storage) GetShopByID(ctx context.Context, id string) (*ShopWithType, error) {
+	// TODO all exist types and shops in response for select input in frontend
 	const op = "coat.storage.GetShopByID"
 
 	query := `SELECT 
