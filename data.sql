@@ -152,10 +152,43 @@ INSERT INTO shop_with_type (
         'd3afe521-92e1-4c97-b556-201169520b12'
 );
 
-SELECT * FROM shop_with_type as swp
+SELECT
+    id,
+    name,
+    phone,
+    street,
+    subway,
+    openPeriod,
+    sp.cityId,
+    cityName,
+    cityLabel,
+    st.typeId,
+    typeName,
+    typeLabel
+FROM shop_with_type as swp
     INNER JOIN
         (SELECT sh.id, sh.cityId, sh.name,sh.phone, sh.street,sh.subway, sh.openPeriod ,shct.cityName, shct.cityLabel, shct.id as shopCityId
             FROM shop as sh LEFT JOIN shop_city as shct ON cityId = shct.id) as sp
                 ON sp.id = shopId
     INNER JOIN (SELECT id as typeId, typeName, typeLabel FROM shop_type) as st ON swp.shopTypeId = st.typeId;
 
+SELECT
+    id,
+    name,
+    phone,
+    street,
+    subway,
+    openPeriod,
+    sp.cityId,
+    cityName,
+    cityLabel,
+    st.typeId,
+    typeName,
+    typeLabel
+FROM shop_with_type as swp
+    INNER JOIN
+        (SELECT sh.id, sh.cityId, sh.name,sh.phone, sh.street,sh.subway, sh.openPeriod ,shct.cityName, shct.cityLabel, shct.id as shopCityId
+    FROM shop as sh LEFT JOIN shop_city as shct ON cityId = shct.id) as sp
+        ON sp.id = shopId
+    INNER JOIN (SELECT id as typeId, typeName, typeLabel FROM shop_type) as st ON swp.shopTypeId = st.typeId
+    WHERE swp.shopId = '02cf3cf3-67f2-4268-a6cb-f117c6517085';

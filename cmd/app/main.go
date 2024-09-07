@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Henus321/boney-james-go-backend/internal/config"
 	"github.com/Henus321/boney-james-go-backend/internal/service/coat"
+	"github.com/Henus321/boney-james-go-backend/internal/service/shop"
 	"github.com/Henus321/boney-james-go-backend/pkg/client/postgresql"
 	"github.com/Henus321/boney-james-go-backend/pkg/logging"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -22,10 +23,12 @@ func main() {
 
 	cfg := config.GetConfig()
 
-	// ??? ошибки на этом уровне обрабатывать или внутри?
+	// ??? ошибки на этом уровне обрабатывать или внутри ок?
 	db := initDatabase(cfg, logger)
 
 	initCoatService(db, router, logger)
+
+	initShopService(db, router, logger)
 
 	initServer(router, cfg)
 }
@@ -66,4 +69,12 @@ func initCoatService(db *pgxpool.Pool, router *httprouter.Router, logger *loggin
 	coatHandler := coat.NewHandler(coatService, logger)
 	logger.Info("coat handler register")
 	coatHandler.Register(router)
+}
+
+func initShopService(db *pgxpool.Pool, router *httprouter.Router, logger *logging.Logger) {
+	shopStorage := shop.NewStorage(db, logger)
+	shopService := shop.NewService(shopStorage)
+	shopHandler := shop.NewHandler(shopService, logger)
+	logger.Info("shop handler register")
+	shopHandler.Register(router)
 }
