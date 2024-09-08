@@ -29,6 +29,20 @@ func ParseJSON(r *http.Request, v any) error {
 	return json.NewDecoder(r.Body).Decode(v)
 }
 
+func SetCookie(w http.ResponseWriter, token string) {
+	expiration := time.Second * time.Duration(3600*24*7)
+
+	cookie := &http.Cookie{
+		Name:     "jwt",
+		Value:    token,
+		Path:     "/",
+		Secure:   true,
+		HttpOnly: true,
+		Expires:  time.Now().Add(expiration),
+	}
+	http.SetCookie(w, cookie)
+}
+
 func DoWithTries(fn func() error, attempts int, delay time.Duration) (err error) {
 	for attempts > 0 {
 		if err = fn(); err != nil {

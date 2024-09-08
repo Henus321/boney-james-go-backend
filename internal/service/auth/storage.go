@@ -23,7 +23,6 @@ func NewStorage(client postgresql.Client, logger *logging.Logger) *Storage {
 func (s *Storage) GetUserByID(ctx context.Context, id string) (*UserOutput, error) {
 	const op = "auth.storage.GetUserByID"
 
-	// TODO not found cases != default error
 	query := `SELECT id, username, email FROM users WHERE id = $1`
 
 	row := s.client.QueryRow(ctx, query, id)
@@ -41,27 +40,21 @@ func (s *Storage) GetUserByID(ctx context.Context, id string) (*UserOutput, erro
 func (s *Storage) GetUserByEmail(ctx context.Context, email string) (*User, error) {
 	const op = "auth.storage.GetUserByEmail"
 
-	query := `SELECT id, username, email FROM users WHERE email = $1`
+	query := `SELECT id, username, email, password, createdAt FROM users WHERE email = $1;`
 
 	row := s.client.QueryRow(ctx, query, email)
 
 	var user User
 
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt)
 	if err != nil {
 		return nil, fmt.Errorf("%s: failed to get user: %w", op, err)
-	}
-
-	// TODO not found cases != default error
-	if user.ID == "" {
-		// TODO отрабтает?
-		return nil, fmt.Errorf("%s: user not found", op)
 	}
 
 	return &user, nil
 }
 
-func (s *Storage) CreateUser(ctx context.Context, input *UserRegisterInput) error {
+func (s *Storage) CreateUser(ctx context.Context, input *UserRegisterInput) (*UserOutput, error) {
 	const op = "auth.storage.CreateUser"
 
 	query := `
@@ -78,9 +71,14 @@ func (s *Storage) CreateUser(ctx context.Context, input *UserRegisterInput) erro
 
 	err := s.client.QueryRow(ctx, query, input.Username, input.Email, input.Password).Scan(&newId)
 	if err != nil {
-		return fmt.Errorf("%s: failed to create user: %w", op, err)
+		return nil, fmt.Errorf("%s: failed to create user: %w", op, err)
 	}
 
-	// ??? returning как правильно вернуть newId? RETURNING id
-	return nil
+	user := UserOutput{
+		ID:       newId.Bytes,
+		Username: input.Username,
+		Email:    input.Email,
+	}
+
+	return &user, nil
 }

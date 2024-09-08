@@ -205,3 +205,5 @@ CREATE TABLE public.users (
 
     UNIQUE(email)
 );
+
+SELECT id, username, email FROM users WHERE email = 'test12@test.com';

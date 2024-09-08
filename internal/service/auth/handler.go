@@ -70,15 +70,17 @@ func (h *handler) LoginUser(w http.ResponseWriter, r *http.Request, _ httprouter
 		return
 	}
 
-	token, err := h.authService.LoginUser(context.Background(), &input)
+	user, token, err := h.authService.LoginUser(context.Background(), &input)
 	if err != nil {
 		h.logger.Error(op, err)
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
+	utils.SetCookie(w, token)
+
 	// TODO error handle
-	utils.WriteJSON(w, http.StatusOK, token)
+	utils.WriteJSON(w, http.StatusOK, user)
 	h.logger.Infof("%s: success", op)
 }
 
@@ -98,18 +100,16 @@ func (h *handler) RegisterUser(w http.ResponseWriter, r *http.Request, _ httprou
 		return
 	}
 
-	err := h.authService.RegisterUser(context.Background(), &input)
+	user, token, err := h.authService.RegisterUser(context.Background(), &input)
 	if err != nil {
 		h.logger.Error(op, err)
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("%s: %w", op, err))
 		return
 	}
 
-	// TODO set cookie
-
-	// TODO return user paylod
+	utils.SetCookie(w, token)
 
 	// TODO error handle
-	utils.WriteJSON(w, http.StatusOK, nil)
+	utils.WriteJSON(w, http.StatusOK, user)
 	h.logger.Infof("%s: success", op)
 }

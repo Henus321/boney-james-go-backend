@@ -1,19 +1,22 @@
 package auth
 
-import "github.com/gofrs/uuid"
+import (
+	"github.com/gofrs/uuid"
+	"time"
+)
 
 type User struct {
-	ID        string         `json:"id"`
-	Username  string         `json:"username"`
-	Password  string         `json:"-"`
-	Email     string         `json:"email"`
-	CreatedAt uuid.Timestamp `json:"createdAt"`
+	ID        uuid.UUID `json:"id"`
+	Username  string    `json:"username"`
+	Password  string    `json:"password"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 type UserOutput struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
+	ID       uuid.UUID `json:"id"`
+	Username string    `json:"username"`
+	Email    string    `json:"email"`
 }
 
 type UserRegisterInput struct {
