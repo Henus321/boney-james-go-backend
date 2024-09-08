@@ -192,3 +192,16 @@ FROM shop_with_type as swp
         ON sp.id = shopId
     INNER JOIN (SELECT id as typeId, typeName, typeLabel FROM shop_type) as st ON swp.shopTypeId = st.typeId
     WHERE swp.shopId = '02cf3cf3-67f2-4268-a6cb-f117c6517085';
+
+----- USER -----
+DROP TABLE IF EXISTS users CASCADE;
+
+CREATE TABLE public.users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username VARCHAR(255) NOT NULL,
+    password  VARCHAR(255) NOT NULL,
+    email  VARCHAR(100) NOT NULL,
+    createdAt TIMESTAMP default current_timestamp,
+
+    UNIQUE(email)
+);

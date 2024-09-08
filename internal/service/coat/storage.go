@@ -213,7 +213,7 @@ func (s *Storage) GetCoatByID(ctx context.Context, id string) (*CoatWithOption, 
 	return &cwo, nil
 }
 
-func (s *Storage) CreateCoat(ctx context.Context, input CreateCoatInput) error {
+func (s *Storage) CreateCoat(ctx context.Context, input CoatCreateInput) error {
 	const op = "coat.storage.CreateCoat"
 
 	query := `
@@ -259,7 +259,7 @@ func (s *Storage) DeleteCoat(ctx context.Context, id string) error {
 	return nil
 }
 
-func (s *Storage) CreateCoatOption(ctx context.Context, input CreateCoatOptionInput) error {
+func (s *Storage) CreateCoatOption(ctx context.Context, input CoatOptionCreateInput) error {
 	const op = "coat.storage.CreateCoatOption"
 
 	query := `

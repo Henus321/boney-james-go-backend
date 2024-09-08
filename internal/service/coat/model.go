@@ -27,13 +27,13 @@ type CoatWithOption struct {
 	CoatOptions []CoatOption `json:"coatOptions"`
 }
 
-type CreateCoatInput struct {
+type CoatCreateInput struct {
 	Model       string `json:"model"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
 
-type CreateCoatOptionInput struct {
+type CoatOptionCreateInput struct {
 	CoatID     string   `json:"coatId"`
 	ColorLabel string   `json:"colorLabel"`
 	ColorHex   string   `json:"colorHex"`

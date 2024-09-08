@@ -10,4 +10,5 @@ storage:
   database: postgres
   username: postgres
   password: postgres
-
+jwt:
+  secret:

@@ -13,6 +13,9 @@ type Config struct {
 		Port string `yaml:"port" env-default:"8080"`
 	} `yaml:"listen"`
 	Storage StorageConfig `yaml:"storage"`
+	JWT     struct {
+		Secret string `yaml:"secret" env-default:"my-not-really-secret-string-for-test?"`
+	}
 }
 
 type StorageConfig struct {

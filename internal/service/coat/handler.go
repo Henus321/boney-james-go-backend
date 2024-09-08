@@ -74,7 +74,7 @@ func (h *handler) GetCoatByID(w http.ResponseWriter, _ *http.Request, params htt
 func (h *handler) CreateCoat(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	const op = "coat.handler.CreateCoat"
 
-	var input CreateCoatInput
+	var input CoatCreateInput
 	if err := utils.ParseJSON(r, &input); err != nil {
 		h.logger.Error(op, err)
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("%s: %w", op, err))
@@ -117,7 +117,7 @@ func (h *handler) DeleteCoat(w http.ResponseWriter, r *http.Request, params http
 func (h *handler) CreateCoatOption(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	const op = "coat.handler.CreateCoatOption"
 
-	var input CreateCoatOptionInput
+	var input CoatOptionCreateInput
 	if err := utils.ParseJSON(r, &input); err != nil {
 		h.logger.Error(op, err)
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("%s: %w", op, err))

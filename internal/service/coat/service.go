@@ -9,9 +9,9 @@ type service struct {
 type Service interface {
 	GetAllCoats(ctx context.Context) (*[]CoatWithOption, error)
 	GetCoatByID(ctx context.Context, id string) (*CoatWithOption, error)
-	CreateCoat(ctx context.Context, input CreateCoatInput) error
+	CreateCoat(ctx context.Context, input CoatCreateInput) error
 	DeleteCoat(ctx context.Context, id string) error
-	CreateCoatOption(ctx context.Context, input CreateCoatOptionInput) error
+	CreateCoatOption(ctx context.Context, input CoatOptionCreateInput) error
 }
 
 func NewService(storage *Storage) Service {
@@ -26,7 +26,7 @@ func (s *service) GetCoatByID(ctx context.Context, id string) (*CoatWithOption, 
 	return s.storage.GetCoatByID(ctx, id)
 }
 
-func (s *service) CreateCoat(ctx context.Context, input CreateCoatInput) error {
+func (s *service) CreateCoat(ctx context.Context, input CoatCreateInput) error {
 	return s.storage.CreateCoat(ctx, input)
 }
 
@@ -34,6 +34,6 @@ func (s *service) DeleteCoat(ctx context.Context, id string) error {
 	return s.storage.DeleteCoat(ctx, id)
 }
 
-func (s *service) CreateCoatOption(ctx context.Context, input CreateCoatOptionInput) error {
+func (s *service) CreateCoatOption(ctx context.Context, input CoatOptionCreateInput) error {
 	return s.storage.CreateCoatOption(ctx, input)
 }

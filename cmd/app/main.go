@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Henus321/boney-james-go-backend/internal/config"
+	"github.com/Henus321/boney-james-go-backend/internal/service/auth"
 	"github.com/Henus321/boney-james-go-backend/internal/service/coat"
 	"github.com/Henus321/boney-james-go-backend/internal/service/shop"
 	"github.com/Henus321/boney-james-go-backend/pkg/client/postgresql"
@@ -25,6 +26,8 @@ func main() {
 
 	// ??? ошибки на этом уровне обрабатывать или внутри ок?
 	db := initDatabase(cfg, logger)
+
+	initAuthService(db, router, logger)
 
 	initCoatService(db, router, logger)
 
@@ -61,6 +64,14 @@ func initDatabase(cfg *config.Config, logger *logging.Logger) *pgxpool.Pool {
 	}
 
 	return postgreSQLClient
+}
+
+func initAuthService(db *pgxpool.Pool, router *httprouter.Router, logger *logging.Logger) {
+	authStorage := auth.NewStorage(db, logger)
+	authService := auth.NewService(authStorage)
+	authHandler := auth.NewHandler(authService, logger)
+	logger.Info("auth handler register")
+	authHandler.Register(router)
 }
 
 func initCoatService(db *pgxpool.Pool, router *httprouter.Router, logger *logging.Logger) {
