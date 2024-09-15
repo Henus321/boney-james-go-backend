@@ -7,6 +7,7 @@ import (
 	"github.com/Henus321/boney-james-go-backend/pkg/logging"
 	"github.com/gofrs/uuid"
 	"github.com/jackc/pgtype"
+	"log"
 )
 
 type Storage struct {
@@ -42,11 +43,15 @@ func (s *Storage) GetAllShops(ctx context.Context, cityId *string, typeId *strin
         (SELECT sh.id, sh.cityId, sh.name,sh.phone, sh.street,sh.subway, sh.openPeriod ,shct.cityName, shct.cityLabel, shct.id as shopCityId
             FROM shop as sh LEFT JOIN shop_city as shct ON cityId = shct.id) as sp
                 ON sp.id = shopId
-    INNER JOIN (SELECT id as typeId, typeName, typeLabel FROM shop_type) as st ON swp.shopTypeId = st.typeId
-	WHERE cityId = $1 AND typeId = $2`
-	// TODO fix filter if - cityId, if not - show all
+    INNER JOIN (SELECT id as typeId, typeName, typeLabel FROM shop_type) as st ON swp.shopTypeId = st.typeId`
+	// TODO WHERE (cityId = $1 or $1 IS NULL) AND (typeId = $2 or $2 IS NULL)`
+	// 1 кейс - Передаю пустоту - показывай все
+	// 2 кейс - Фильтрация по typeId должна убирать магазины без таких типов в листе, но сейчас убирает типы из самого листа внутри магазина
+	// 3 кейс - Нужно прислать все уникальные типы магазинов и городов для селектов, сделать это отдельной функцией или запихнуть сюда?
+	log.Printf("cityId: %v, typeId %v", cityId, typeId)
+	//rows, err := s.client.Query(ctx, query, cityId, typeId)
 
-	rows, err := s.client.Query(ctx, query, cityId, typeId)
+	rows, err := s.client.Query(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("%s: failed to get shops: %w", op, err)
 	}
@@ -139,7 +144,6 @@ func (s *Storage) GetAllShops(ctx context.Context, cityId *string, typeId *strin
 }
 
 func (s *Storage) GetShopByID(ctx context.Context, id string) (*ShopWithType, error) {
-	// TODO all exist types and shops in response for select input in frontend
 	const op = "coat.storage.GetShopByID"
 
 	query := `SELECT 
