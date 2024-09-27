@@ -120,11 +120,11 @@ INSERT INTO shop (
         subway,
         openPeriod
 ) VALUES (
-        'fdb2de16-75b1-4ba4-9702-d90ca05bd110',
-        'ТЦ Европейский',
-        '+7 (495) 921-34-44',
-        'ул.Площадь Киевского Вокзала',
-        'Метро Киевская',
+        'e993686d-cf52-4f42-afc2-314f6ee10bb2',
+        'ТР Малый ГУМ',
+        '+7 (423) 222-20-54',
+        'ул.Светланская, стр. 43',
+        'Станция Улица Лазо',
         '10:00-22:00'
 );
 
@@ -132,8 +132,8 @@ INSERT INTO shop_city (
         cityName,
         cityLabel
 ) VALUES (
-        'moscow',
-        'Москва'
+        'vladivostok',
+        'Владивосток'
 );
 
 INSERT INTO shop_type (
@@ -148,8 +148,8 @@ INSERT INTO shop_with_type (
         shopId,
         shopTypeId
 ) VALUES (
-        '02cf3cf3-67f2-4268-a6cb-f117c6517085',
-        'd3afe521-92e1-4c97-b556-201169520b12'
+        '7e0cdc07-aae1-46e8-a0ae-e790870a955e',
+        'ba4e21d9-2d83-4470-9359-90990c18a254'
 );
 
 SELECT
